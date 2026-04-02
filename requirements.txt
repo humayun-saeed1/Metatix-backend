@@ -1,18 +1,20 @@
-# Web Framework
+# Web Framework & Server
 fastapi[all]
+uvicorn
 
 # Database
 sqlalchemy
-psycopg2-binary        # For PostgreSQL (use 'aiosqlite' if doing async SQLite)
-alembic                # For database migrations
+psycopg2-binary
+alembic
 
 # Security & Authentication
-passlib[bcrypt]        # For password hashing
-python-jose[cryptography] # For JWT tokens
-python-multipart      # Required for OAuth2 form logins
+passlib[bcrypt]
+python-jose[cryptography]
+python-multipart
 
 # Configuration
-pydantic-settings      # For .env and config management
+pydantic-settings
 
-# Server
-uvicorn
+# Third-Party Integrations
+stripe
+twilio
