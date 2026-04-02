@@ -19,3 +19,4 @@ pydantic-settings
 stripe
 twilio
 apscheduler
+cloudinary
