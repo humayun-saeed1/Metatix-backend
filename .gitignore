@@ -1,0 +1,45 @@
+# --- Python & Virtual Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+.venv
+
+# --- Database & Migrations ---
+# Ignore the local sqlite file if using it for dev
+*.sqlite3
+*.db
+# Keep migration scripts, but ignore the compiled ones
+migrations/__pycache__/
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- IDEs & Editors ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Distribution / Packaging ---
+dist/
+build/
+*.egg-info/
+.installed.cfg
+.pip-wheel-metadata/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# --- Logs ---
+*.log
+logs/

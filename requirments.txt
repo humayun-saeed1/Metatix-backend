@@ -1,0 +1,18 @@
+# Web Framework
+fastapi[all]
+
+# Database
+sqlalchemy
+psycopg2-binary        # For PostgreSQL (use 'aiosqlite' if doing async SQLite)
+alembic                # For database migrations
+
+# Security & Authentication
+passlib[bcrypt]        # For password hashing
+python-jose[cryptography] # For JWT tokens
+python-multipart      # Required for OAuth2 form logins
+
+# Configuration
+pydantic-settings      # For .env and config management
+
+# Server
+uvicorn
