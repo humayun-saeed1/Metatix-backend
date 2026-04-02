@@ -18,3 +18,4 @@ pydantic-settings
 # Third-Party Integrations
 stripe
 twilio
+apscheduler
