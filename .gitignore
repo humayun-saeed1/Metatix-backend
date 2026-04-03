@@ -43,3 +43,4 @@ htmlcov/
 # --- Logs ---
 *.log
 logs/
+my_database.sql

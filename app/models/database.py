@@ -1,18 +1,26 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
-# This is the "Address" of your Postgres warehouse
+# 1. Get the URL and fix the 'postgres' vs 'postgresql' prefix
 DATABASE_URL = settings.DB_URL
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-engine = create_engine(DATABASE_URL)
+# 2. Upgrade the Engine with SSL and Connection Pinging
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,           # Fixes "SSL connection closed"
+    pool_recycle=300,             # Refreshes connection every 5 mins
+    connect_args={"sslmode": "require"}  # Required for Railway
+)
+
+# --- THE REST STAYS THE SAME ---
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# This 'Base' is what all your tables will inherit from
 Base = declarative_base()
 
-# Add this new function at the bottom:
 def get_db():
     db = SessionLocal()
     try:
