@@ -33,8 +33,7 @@ def send_reset_password_email(email_to: str, reset_token: str):
     message.attach(MIMEText(html, "html"))
 
     try:
-        with smtplib.SMTP(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
             server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
             server.sendmail(settings.MAIL_FROM, email_to, message.as_string())
         return True
@@ -94,8 +93,7 @@ def send_cancellation_email(email_to: str, event_title: str):
 # Helper function to keep your code DRY
 def _send_email(email_to, message):
     try:
-        with smtplib.SMTP(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
             server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
             server.sendmail(settings.MAIL_FROM, email_to, message.as_string())
     except Exception as e:

@@ -7,6 +7,8 @@ def _get_twilio_client():
 def send_welcome_sms(phone_number: str, name: str):
     if not phone_number: return
     try:
+        if not settings.TWILIO_ACCOUNT_SID or "AC" not in settings.TWILIO_ACCOUNT_SID:
+            return  # SMS disabled or tier expired
         client = _get_twilio_client()
         client.messages.create(
             body=f"👋 Welcome to Metatix, {name}! Your account is live. Ready to find your next favorite event?",
@@ -14,11 +16,14 @@ def send_welcome_sms(phone_number: str, name: str):
             to=phone_number
         )
     except Exception as e:
-        print(f"🚨 Twilio Welcome SMS Failed: {e}")
+        # Silenced as per user request (Free tier expired)
+        print(f"ℹ️ Twilio SMS skipped/failed: {e}")
 
 def send_ticket_sms(phone_number: str, event_title: str, quantity: int):
     if not phone_number: return
     try:
+        if not settings.TWILIO_ACCOUNT_SID or "AC" not in settings.TWILIO_ACCOUNT_SID:
+            return
         client = _get_twilio_client()
         client.messages.create(
             body=f"🎟️ METATIX VIP: You're going to {event_title}! Your {quantity} ticket(s) are locked in. Check your email for details.",
@@ -26,11 +31,13 @@ def send_ticket_sms(phone_number: str, event_title: str, quantity: int):
             to=phone_number
         )
     except Exception as e:
-        print(f"🚨 Twilio Ticket SMS Failed: {e}")
+        print(f"ℹ️ Twilio SMS skipped/failed: {e}")
 
 def send_cancellation_sms(phone_number: str, event_title: str):
     if not phone_number: return
     try:
+        if not settings.TWILIO_ACCOUNT_SID or "AC" not in settings.TWILIO_ACCOUNT_SID:
+            return
         client = _get_twilio_client()
         client.messages.create(
             body=f"⚠️ METATIX UPDATE: Unfortunately, {event_title} has been cancelled by the organizer. A full refund is being processed.",
@@ -38,4 +45,4 @@ def send_cancellation_sms(phone_number: str, event_title: str):
             to=phone_number
         )
     except Exception as e:
-        print(f"🚨 Twilio Cancellation SMS Failed: {e}")
+        print(f"ℹ️ Twilio SMS skipped/failed: {e}")
