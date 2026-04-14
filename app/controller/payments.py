@@ -63,8 +63,8 @@ def create_cart_checkout(
             payment_method_types=["card"],
             line_items=line_items,
             mode="payment",
-            success_url="http://localhost:5173/mytickets?success=true&session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://localhost:5173/cart",
+            success_url="https://metatix-frontend.vercel.app/mytickets?success=true&session_id={CHECKOUT_SESSION_ID}",
+            cancel_url="https://metatix-frontend.vercel.app/cart",
             metadata={
                 "user_id": current_user.user_id,
                 "booking_ids": ",".join(map(str, request.booking_ids)) 

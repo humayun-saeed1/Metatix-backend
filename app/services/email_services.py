@@ -5,7 +5,7 @@ from app.core.config import settings
 
 def send_reset_password_email(email_to: str, reset_token: str):
     # The URL your React app will be listening on
-    reset_link = f"http://localhost:5173/reset-password?token={reset_token}"
+    reset_link = f"https://metatix-frontend.vercel.app/reset-password?token={reset_token}"
 
     message = MIMEMultipart("alternative")
     message["Subject"] = "Reset Your Metatix Password"

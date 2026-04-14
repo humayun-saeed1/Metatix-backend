@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # --- NEW GOOGLE OAUTH VARIABLES ---
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/auth/callback" # We can just hardcode the local URL here!
+    GOOGLE_REDIRECT_URI: str = "https://metatix-backend-production.up.railway.app/auth/callback" 
     
 
     CLOUDINARY_CLOUD_NAME: str

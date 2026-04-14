@@ -160,7 +160,7 @@ def google_callback(code: str, db: Session = Depends(get_db)):
 
     # E. Send the user back to your React frontend with the token
     # React will grab this token from the URL and save it to localStorage
-    frontend_redirect_url = f"http://localhost:5173/login-success?token={metatix_token}"
+    frontend_redirect_url = f"https://metatix-frontend.vercel.app/login-success?token={metatix_token}"
     return RedirectResponse(url=frontend_redirect_url)
 
 

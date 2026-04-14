@@ -86,8 +86,8 @@ def onboard_organizer(
     try:
         account_link = stripe.AccountLink.create(
             account=current_user.stripe_connect_id,
-            refresh_url="http://localhost:5173/organizer-dashboard?stripe=refresh", 
-            return_url="http://localhost:5173/organizer-dashboard?stripe=success",  
+            refresh_url="https://metatix-frontend.vercel.app/organizer-dashboard?stripe=refresh", 
+            return_url="https://metatix-frontend.vercel.app/organizer-dashboard?stripe=success",  
             type="account_onboarding",
         )
         return {"url": account_link.url}
