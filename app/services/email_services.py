@@ -1,18 +1,9 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 from app.core.config import settings
 
 def send_reset_password_email(email_to: str, reset_token: str):
-    # The URL your React app will be listening on
     reset_link = f"https://metatix-frontend.vercel.app/reset-password?token={reset_token}"
-
-    message = MIMEMultipart("alternative")
-    message["Subject"] = "Reset Your Metatix Password"
-    message["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
-    message["To"] = email_to
-
-    # A clean, branded HTML email
+    subject = "Reset Your Metatix Password"
     html = f"""
     <html>
       <body style="font-family: 'Lato', sans-serif; color: #2D2D2D; line-height: 1.6;">
@@ -30,23 +21,10 @@ def send_reset_password_email(email_to: str, reset_token: str):
       </body>
     </html>
     """
-    message.attach(MIMEText(html, "html"))
+    return _send_email(email_to, subject, html)
 
-    try:
-        with smtplib.SMTP_SSL(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
-            server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
-            server.sendmail(settings.MAIL_FROM, email_to, message.as_string())
-        return True
-    except Exception as e:
-        print(f"🚨 Email Sending Failed: {e}")
-        return False
-    
 def send_welcome_email(email_to: str, name: str):
-    message = MIMEMultipart("alternative")
-    message["Subject"] = "Welcome to Metatix!"
-    message["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
-    message["To"] = email_to
-
+    subject = "Welcome to Metatix!"
     html = f"""
     <div style="font-family: 'Lato', sans-serif; padding: 20px; border: 1px solid #f0f0f0; border-radius: 15px; max-width: 600px; margin: auto;">
         <h2 style="color: #6E39CB;">Welcome to Metatix, {name}! 🎟️</h2>
@@ -54,15 +32,10 @@ def send_welcome_email(email_to: str, name: str):
         <p>Log in now to browse upcoming drops.</p>
     </div>
     """
-    message.attach(MIMEText(html, "html"))
-    _send_email(email_to, message) # Assuming you abstract the smtplib.SMTP block into a helper
+    _send_email(email_to, subject, html)
 
 def send_ticket_email(email_to: str, name: str, event_title: str, quantity: int):
-    message = MIMEMultipart("alternative")
-    message["Subject"] = f"Your Tickets for {event_title} are Confirmed!"
-    message["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
-    message["To"] = email_to
-
+    subject = f"Your Tickets for {event_title} are Confirmed!"
     html = f"""
     <div style="font-family: 'Lato', sans-serif; padding: 20px; border: 1px solid #f0f0f0; border-radius: 15px; max-width: 600px; margin: auto;">
         <h2 style="color: #10B981;">Payment Successful! 🎉</h2>
@@ -71,15 +44,10 @@ def send_ticket_email(email_to: str, name: str, event_title: str, quantity: int)
         <p>You can view your QR codes anytime in the 'My Tickets' section of your dashboard.</p>
     </div>
     """
-    message.attach(MIMEText(html, "html"))
-    _send_email(email_to, message)
+    _send_email(email_to, subject, html)
 
 def send_cancellation_email(email_to: str, event_title: str):
-    message = MIMEMultipart("alternative")
-    message["Subject"] = f"Event Cancelled: {event_title}"
-    message["From"] = f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>"
-    message["To"] = email_to
-
+    subject = f"Event Cancelled: {event_title}"
     html = f"""
     <div style="font-family: 'Lato', sans-serif; padding: 20px; border: 1px solid #f0f0f0; border-radius: 15px; max-width: 600px; margin: auto;">
         <h2 style="color: #EF4444;">Event Cancellation Notice</h2>
@@ -87,14 +55,38 @@ def send_cancellation_email(email_to: str, event_title: str):
         <p>Any payments made have been flagged for a full refund. We apologize for the inconvenience.</p>
     </div>
     """
-    message.attach(MIMEText(html, "html"))
-    _send_email(email_to, message)
+    _send_email(email_to, subject, html)
 
-# Helper function to keep your code DRY
-def _send_email(email_to, message):
+def _send_email(email_to: str, subject: str, html_content: str):
+    """
+    Helper to send email via Resend API
+    """
     try:
-        with smtplib.SMTP_SSL(settings.MAIL_SERVER, settings.MAIL_PORT) as server:
-            server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
-            server.sendmail(settings.MAIL_FROM, email_to, message.as_string())
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        # Note: If they don't have a verified domain on Resend, 
+        # 'from' MUST be 'onboarding@resend.dev'. 
+        # Otherwise, they can use their own MAIL_FROM.
+        # We'll try to use their MAIL_FROM but fall back or recommend onboarding if it fails.
+        payload = {
+            "from": f"{settings.MAIL_FROM_NAME} <{settings.MAIL_FROM}>",
+            "to": [email_to],
+            "subject": subject,
+            "html": html_content
+        }
+        
+        response = requests.post(url, headers=headers, json=payload)
+        
+        if response.status_code in [200, 201]:
+            return True
+        else:
+            print(f"🚨 Resend API Error ({response.status_code}): {response.text}")
+            return False
+            
     except Exception as e:
-        print(f"🚨 Email Sending Failed: {e}")
+        print(f"🚨 Email Sending Failed (Resend): {e}")
+        return False
